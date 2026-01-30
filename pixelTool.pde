@@ -51,6 +51,7 @@ void setup() {
   // Register tools
   toolbar.addTool(new ColorTool());
   toolbar.addTool(new PencilTool());
+  toolbar.addTool(new EraseTool());
   // default to the Pencil tool so drawing works immediately
   toolbar.setActive(1);
 
@@ -188,11 +189,27 @@ void keyPressed() {
     cSnap.resize(int(canvasBuf.w * canvasScale), int(canvasBuf.h * canvasScale));
     cSnap.save("canvas_dump.png");
   }
+  if (key == 'e' || key == 'E') {
+    // clear canvas to transparent
+    toolbar.setActive(3); // switch to Erase tool
+  }
   if (key == 'x' || key == 'X') {
     // swap foreground and background
     int tmp = fgColor;
     fgColor = bgColor;
     bgColor = tmp;
+  }
+  if (key == 'z' || key == 'Z') {
+    // undo last action
+    if (state != null) {
+      state.undo();
+    }
+  }
+  if (key == 'y' || key == 'Y') {
+    // redo last undone action
+    if (state != null) {
+      state.redo();
+    }
   }
   if (key == 'f' || key == 'F') {
     // flood fill at cursor using foreground color

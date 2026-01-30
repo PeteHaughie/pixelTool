@@ -29,9 +29,15 @@ class CanvasBuffer {
     int idx = y * w + x;
     logicalPixels[idx] = col;
     buf.beginDraw();
+    buf.pushStyle();
+    // Use REPLACE blend mode for per-pixel writes so alpha is written
+    // exactly and transparent pixels clear underlying content.
+    buf.blendMode(REPLACE);
     buf.noStroke();
     buf.fill(col);
     buf.rect(x, y, 1, 1);
+    buf.blendMode(BLEND);
+    buf.popStyle();
     buf.endDraw();
   }
 
