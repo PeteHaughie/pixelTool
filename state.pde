@@ -149,8 +149,6 @@ class StateManager {
     int[] pixels = canvas.getLogicalPixels();
     int target = pixels[idx];
 
-    println("floodFill start: x=", x, " y=", y, " idx=", idx, " w=", w, " h=", h, " size=", size);
-    println("target=", hex(target), " fill=", hex(col));
     if (target == col) return;
 
     boolean[] visited = new boolean[size];
@@ -231,6 +229,5 @@ class StateManager {
       undoStack.add(entry);
       redoStack.clear();
     }
-    println("floodFill result: filled=", filledCount, " bbox= [", minX, ",", minY, "] - [", maxX, ",", maxY, "]");
   }
 }
