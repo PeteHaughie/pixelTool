@@ -30,6 +30,11 @@ void keyPressed() {
     // switch to Erase tool by name
     toolbar.setActiveByName("Erase");
   }
+  if (key == 'm' || key == 'M') {
+    println("Square Marquee Tool Selected");
+    // switch to Square Marquee tool by name
+    toolbar.setActiveByName("Marquee");
+  }
   if (key == 'x' || key == 'X') {
     println("Swap Foreground/Background Colors");
     // swap foreground and background

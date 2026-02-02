@@ -53,6 +53,7 @@ void setup() {
   toolbar.addTool(new PencilTool());
   toolbar.addTool(new FloodFillTool());
   toolbar.addTool(new EraseTool());
+  toolbar.addTool(new SquareMarqueeTool());
   // default to the Pencil tool so drawing works immediately
   toolbar.setActiveByName("Pencil");
 

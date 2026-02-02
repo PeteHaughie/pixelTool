@@ -24,15 +24,16 @@ There is a preview window to see the artwork in real-time. Under the preview you
 
 The user experience focuses on ease of use and efficiency. Commonly understood keyboard shortcuts are available for actions which are frequently used, such as undo, redo, copy, paste, and tool selection. The interface is designed to minimize the number of clicks and provide immediate feedback to the user. There is a shift-click feature to draw straight lines, and a click-and-drag feature for filling areas with color.
 
-- CTRL/CMD + P: Pencil Tool 
-- CTRL/CMD + R: Rectangle Selection Tool
-- CTRL/CMD + L: Lasso Selection Tool
+- P: Pencil Tool 
+- M: Rectangle Selection Tool
+- L: Lasso Selection Tool
+- E: Eraser Tool
+- F: Fill Tool 
+- T: Toggle Transparency Grid
+- C: Color Picker Tool 
 - CTRL/CMD + A: Select All
 - CTRL/CMD + D: Deselect
-- CTRL/CMD + E: Eraser Tool
 - Shift + CTRL/CMD + F: Fullscreen Mode
-- CTRL/CMD + G: Fill Tool 
-- CTRL/CMD + C: Color Picker Tool 
 - CTRL/CMD + X: Cut
 - CTRL/CMD + C: Copy
 - CTRL/CMD + V: Paste
@@ -40,7 +41,6 @@ The user experience focuses on ease of use and efficiency. Commonly understood k
 - CTRL/CMD + Y: Redo
 - CTRL/CMD + S: Save
 - SHIFT + CTRL/CMD + S: Save As/Save a Copy
-- CTRL/CMD + T: Toggle Transparency Grid
 - CTRL/CMD + O: Open
 - CTRL/CMD + W: Close Canvas (user will be prompted to save current work if unsaved changes exist)
 - CTRL/CMD + N: New Canvas (user will be prompted to save current work if unsaved changes exist)
