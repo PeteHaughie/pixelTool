@@ -1,24 +1,33 @@
 void keyPressed() {
   if (key == 'd' || key == 'D') {
     // dump preview for debugging at displayed sizes, composed with checkerboard
-    PGraphics pd = createGraphics(preview.w, preview.h);
+    int outPW = int(preview.w * previewScale);
+    int outPH = int(preview.h * previewScale);
+    PGraphics pd = createGraphics(outPW, outPH);
     pd.beginDraw();
-    pd.image(checkPattern, 0, 0, preview.w, preview.h);
-    pd.image(preview.preview.get(), 0, 0);
+    pd.noSmooth();
+    pd.image(preview.preview.get(), 0, 0, outPW, outPH);
     pd.endDraw();
-    PImage pSnap = pd.get();
-    pSnap.resize(int(preview.w * previewScale), int(preview.h * previewScale));
-    pSnap.save("preview_dump.png");
+    pd.save("preview_dump.png");
 
     // also dump the raw canvas buffer scaled to the displayed canvas size, composed
-    PGraphics cd = createGraphics(canvasBuf.w, canvasBuf.h);
+    int outCW = int(canvasBuf.w * canvasScale);
+    int outCH = int(canvasBuf.h * canvasScale);
+    PGraphics cd = createGraphics(outCW, outCH);
     cd.beginDraw();
-    cd.image(checkPattern, 0, 0, canvasBuf.w, canvasBuf.h);
-    cd.image(canvasBuf.getBuffer().get(), 0, 0);
+    cd.noSmooth();
+    cd.image(canvasBuf.getBuffer().get(), 0, 0, outCW, outCH);
     cd.endDraw();
-    PImage cSnap = cd.get();
-    cSnap.resize(int(canvasBuf.w * canvasScale), int(canvasBuf.h * canvasScale));
-    cSnap.save("canvas_dump.png");
+    cd.save("canvas_dump.png");
+
+    int outExpW = int(canvasBuf.w);
+    int outExpH = int(canvasBuf.h);
+    PGraphics ce = createGraphics(outExpW, outExpH);
+    ce.beginDraw();
+    ce.noSmooth();
+    ce.image(canvasBuf.getBuffer().get(), 0, 0, outExpW, outExpH);
+    ce.endDraw();
+    ce.save("canvas_dump_exact.png"); // this is what we'll probably use for export
   }
   if (key == 'p' || key == 'P') {
     println("Pencil Tool Selected");
