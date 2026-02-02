@@ -12,12 +12,14 @@ This file records concrete, implementable tasks converted from the `README.md` f
 - [ ] Export settings: add export options dialog (canvas size, bg color, frame delay for GIFs).
 - [ ] Zoom & pan: implement zoom in/out and pan canvas with mouse and keyboard shortcuts.
 - [ ] Grid/snapping: add grid overlay toggle and snapping options for pixel-perfect drawing.
+- [ ] Canvas size & grid: add canvas-size dialog and grid toggles (grid color/spacing).
 - [ ] File operations: implement New, Open, Save, Save As functionality with project file format.
 - [ ] Animation playback: add play/pause controls for previewing animations in the preview panel.
 - [ ] Image import: implement image import dialog with scaling and positioning options.
 - [ ] Brush shapes: add different brush shapes (circle, square) and size options for drawing tools.
 - [ ] Preview panel: finalize preview panel UI and ensure it updates in real-time with canvas changes.
 - [ ] Keyboard shortcuts: implement and document keyboard shortcuts for common actions (undo, redo, tool switch).
+- [ ] Save file confirmation: add confirmation dialog when closing with unsaved changes.
 - [ ] Floating toolbars: allow dragging and docking of toolbars and panels within the main window.
 - [ ] Floating canvas: implement floating/detachable canvas window option.
 - [ ] Custom brushes: add support for custom brush shapes and sizes (import brush images).
@@ -32,7 +34,6 @@ This file records concrete, implementable tasks converted from the `README.md` f
 - [ ] Frame renaming: allow renaming frames in the timeline panel.
 - [ ] Enxure export respects transparency and alpha channel correctly.
 - [ ] Palette management: add palette panel (create/save/load palettes, edit swatches).
-- [ ] Canvas size & grid: add canvas-size dialog and grid toggles (grid color/spacing).
 - [ ] Image import: allow loading/positioning images for tracing (scale, opacity, snap-to-grid).
 - [ ] Preview & frames: finalize preview window frame list UI, add add/remove/duplicate frame actions.
 - [ ] Undo/Redo: verify unlimited undo/redo across operations and composite actions (flood fill, imports).

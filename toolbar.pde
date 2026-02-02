@@ -20,6 +20,46 @@ class Toolbar {
     if (idx >= 0 && idx < tools.size()) activeIndex = idx;
   }
 
+  // Select the active tool by its `Tool.name` value. Safe when callers don't
+  // know the numeric index (helps avoid off-by-one / 1-based indexing errors).
+  void setActiveByName(String name) {
+    for (int i = 0; i < tools.size(); i++) {
+      Tool t = tools.get(i);
+      if (t != null && t.name != null && t.name.equals(name)) {
+        activeIndex = i;
+        return;
+      }
+    }
+  }
+
+  // Get the tool at the given index.
+  Tool getToolByIndex(int idx) {
+    if (idx >= 0 && idx < tools.size()) {
+      return tools.get(idx);
+    }
+    return null;
+  }
+
+  // Get the tool name at the given index.
+  String getToolByName(int idx) {
+    Tool t = getToolByIndex(idx);
+    if (t != null) {
+      return t.name;
+    }
+    return null;
+  }
+
+  // Select the active tool by its concrete class simple name (e.g. "EraseTool").
+  void setActiveByClassName(String className) {
+    for (int i = 0; i < tools.size(); i++) {
+      Tool t = tools.get(i);
+      if (t != null && t.getClass().getSimpleName().equals(className)) {
+        activeIndex = i;
+        return;
+      }
+    }
+  }
+
   // Draw a simple vertical toolbar at x,y
   void draw(float x, float y) {
     pushStyle();

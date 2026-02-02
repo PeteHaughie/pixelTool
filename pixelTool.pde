@@ -51,9 +51,10 @@ void setup() {
   // Register tools
   toolbar.addTool(new ColorTool());
   toolbar.addTool(new PencilTool());
+  toolbar.addTool(new FloodFillTool());
   toolbar.addTool(new EraseTool());
   // default to the Pencil tool so drawing works immediately
-  toolbar.setActive(1);
+  toolbar.setActiveByName("Pencil");
 
   // initial canvas clear
   canvasBuf.clear(color(255, 255, 255, 0));
@@ -162,60 +163,3 @@ void mouseReleased() {
   }
 }
 
-void keyPressed() {
-  // simple shortcuts: number keys select toolbar slots
-  if (key >= '1' && key <= '9') {
-    int idx = key - '1';
-    toolbar.setActive(idx);
-  }
-  if (key == 'd' || key == 'D') {
-    // dump preview for debugging at displayed sizes, composed with checkerboard
-    PGraphics pd = createGraphics(preview.w, preview.h);
-    pd.beginDraw();
-    pd.image(checkPattern, 0, 0, preview.w, preview.h);
-    pd.image(preview.preview.get(), 0, 0);
-    pd.endDraw();
-    PImage pSnap = pd.get();
-    pSnap.resize(int(preview.w * previewScale), int(preview.h * previewScale));
-    pSnap.save("preview_dump.png");
-
-    // also dump the raw canvas buffer scaled to the displayed canvas size, composed
-    PGraphics cd = createGraphics(canvasBuf.w, canvasBuf.h);
-    cd.beginDraw();
-    cd.image(checkPattern, 0, 0, canvasBuf.w, canvasBuf.h);
-    cd.image(canvasBuf.getBuffer().get(), 0, 0);
-    cd.endDraw();
-    PImage cSnap = cd.get();
-    cSnap.resize(int(canvasBuf.w * canvasScale), int(canvasBuf.h * canvasScale));
-    cSnap.save("canvas_dump.png");
-  }
-  if (key == 'e' || key == 'E') {
-    // clear canvas to transparent
-    toolbar.setActive(3); // switch to Erase tool
-  }
-  if (key == 'x' || key == 'X') {
-    // swap foreground and background
-    int tmp = fgColor;
-    fgColor = bgColor;
-    bgColor = tmp;
-  }
-  if (key == 'z' || key == 'Z') {
-    // undo last action
-    if (state != null) {
-      state.undo();
-    }
-  }
-  if (key == 'y' || key == 'Y') {
-    // redo last undone action
-    if (state != null) {
-      state.redo();
-    }
-  }
-  if (key == 'f' || key == 'F') {
-    // flood fill at cursor using foreground color
-    PVector c = screenToCanvas(mouseX, mouseY, canvasScale);
-    int px = (int)round(c.x - 0.5);
-    int py = (int)round(c.y - 0.5);
-    if (state != null) state.floodFill(px, py, fgColor);
-  }
-}
