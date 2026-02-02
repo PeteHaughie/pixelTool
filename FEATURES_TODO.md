@@ -5,7 +5,7 @@ This file records concrete, implementable tasks converted from the `README.md` f
 - [ ] Layers: implement layer model and layer panel (create/add/delete/reorder/merge).
 - [ ] Export: add export dialog supporting PNG, GIF, BMP (single-frame and animated GIF).
 - [ ] Onion skinning: add onion-skin controls for preview/animation (opacity, frames before/after).
-- [ ] Selection tools: implement Rectangle and Lasso selection tools and `select all`/`deselect` actions.
+- [ ] Selection tools: implement Rectangle and Lasso selection tools and `select all`/`deselect` actions. Marching ants outline.
 - [ ] Tools: verify and polish Pencil, Eraser, Fill, Color Picker; add brush size UI and shape options.
 - [ ] Animation timeline: add timeline panel for frame management (add/delete/reorder frames).
 - [ ] Color picker: implement advanced color picker dialog (HSV/Hex input, recent colors).

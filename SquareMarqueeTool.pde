@@ -1,3 +1,9 @@
+// marching ants settings (global for this tool file)
+int antsOffset = 0;
+int antsDash = 4; // length of dash in pixels
+int antsSpeedMs = 60; // milliseconds per step (higher = slower)
+int antsLastTick = 0;
+
 class SquareMarqueeTool extends Tool {
   float startX, startY;
   boolean dragging = false;
@@ -5,6 +11,13 @@ class SquareMarqueeTool extends Tool {
 
   SquareMarqueeTool() {
     super("Marquee");
+  }
+
+  // Clear selection when the tool becomes active so previous coords aren't reused
+  void onActivate() {
+    selW = selH = 0;
+    selX = selY = 0;
+    dragging = false;
   }
 
   void onMousePressed(float x, float y) {
@@ -45,11 +58,53 @@ class SquareMarqueeTool extends Tool {
     pg.fill(0, 120);
     pg.rect(selX, selY, selW, selH);
 
-    // outline
+    // marching ants outline
     pg.noFill();
-    pg.stroke(255);
     pg.strokeWeight(1);
-    pg.rect(selX, selY, selW, selH);
+    pg.noSmooth();
+
+    // advance animation offset on a timer to slow down animation
+    int now = millis();
+    if (now - antsLastTick >= antsSpeedMs) {
+      antsOffset = (antsOffset + 1) % (antsDash * 2);
+      antsLastTick = now;
+    }
+
+    // Draw perimeter in clockwise order using a single perimeter index
+    int sw = (int)selW;
+    int sh = (int)selH;
+    int perimeter = 2 * (sw + sh) - 4;
+    if (perimeter > 0) {
+      int idx = 0;
+      // top edge (left -> right)
+      for (int i = 0; i < sw; i++) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) pg.stroke(255); else pg.stroke(0);
+        pg.point(selX + i, selY);
+      }
+      // right edge (top+1 -> bottom-1)
+      for (int j = 1; j < sh-1; j++) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) pg.stroke(255); else pg.stroke(0);
+        pg.point(selX + sw - 1, selY + j);
+      }
+      // bottom edge (right -> left)
+      for (int i = sw - 1; i >= 0; i--) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) pg.stroke(255); else pg.stroke(0);
+        pg.point(selX + i, selY + sh - 1);
+      }
+      // left edge (bottom-1 -> top+1)
+      for (int j = sh - 2; j >= 1; j--) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) pg.stroke(255); else pg.stroke(0);
+        pg.point(selX, selY + j);
+      }
+    }
     pg.popStyle();
   }
 

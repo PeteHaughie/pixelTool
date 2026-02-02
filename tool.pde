@@ -39,4 +39,8 @@ abstract class Tool {
   int getCursorColor() {
     return color(0);
   }
+
+  // Lifecycle hooks called by the toolbar when tools are switched
+  void onActivate() {}
+  void onDeactivate() {}
 }

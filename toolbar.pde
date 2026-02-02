@@ -17,7 +17,14 @@ class Toolbar {
   }
 
   void setActive(int idx) {
-    if (idx >= 0 && idx < tools.size()) activeIndex = idx;
+    if (idx >= 0 && idx < tools.size()) {
+      // call deactivate on previous tool
+      Tool prev = getActive();
+      if (prev != null) prev.onDeactivate();
+      activeIndex = idx;
+      Tool now = getActive();
+      if (now != null) now.onActivate();
+    }
   }
 
   // Select the active tool by its `Tool.name` value. Safe when callers don't
@@ -26,7 +33,7 @@ class Toolbar {
     for (int i = 0; i < tools.size(); i++) {
       Tool t = tools.get(i);
       if (t != null && t.name != null && t.name.equals(name)) {
-        activeIndex = i;
+        setActive(i);
         return;
       }
     }
@@ -54,7 +61,7 @@ class Toolbar {
     for (int i = 0; i < tools.size(); i++) {
       Tool t = tools.get(i);
       if (t != null && t.getClass().getSimpleName().equals(className)) {
-        activeIndex = i;
+        setActive(i);
         return;
       }
     }
