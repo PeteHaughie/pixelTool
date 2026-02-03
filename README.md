@@ -66,6 +66,10 @@ The kayboard controls are split between unmodified keys for easy and intuitive a
 - CTRL/CMD + O: Open
 - CTRL/CMD + W: Close Canvas (user will be prompted to save current work if unsaved changes exist)
 - CTRL/CMD + N: New Canvas (user will be prompted to save current work if unsaved changes exist)
+- CTRL/CMD + Plus (+): Zoom In
+- CTRL/CMD + Minus (-): Zoom Out
+- CTRL/CMD + 0: Reset Zoom to 100%
+- CTRL/CMD + 1: Set Zoom to 200%
 
 ### Navigation Keys
 - Tab: Switch between tools

@@ -13,6 +13,13 @@ PGraphics checkPattern;
 int checkSize = 4;
 int toolSize = 1;
 String toolShape = "rect"; // future: support other shapes
+// Pan/zoom state (canvas displayed at an offset and scale)
+float canvasOffsetX = 100;
+float canvasOffsetY = 10;
+float minCanvasScale = 1.0;
+float maxCanvasScale = 32.0;
+boolean panning = false;
+boolean panStickyByH = false; // true when panning was toggled on via 'h'
 
 void settings() {
   size(800, 620);
@@ -53,10 +60,10 @@ void setup() {
   toolbar.addTool(new FloodFillTool());
   toolbar.addTool(new EraseTool());
   toolbar.addTool(new SquareMarqueeTool());
+  toolbar.addTool(new ZoomTool());
   // add the swatch tool last so it's at the bottom of the list
   toolbar.addTool(new ColorTool());
-  // default to the Pencil tool so drawing works immediately
-  toolbar.setActiveByName("Pencil");
+  // NOTE: no tool is active by default — user must select one explicitly
 
   // initial canvas clear
   canvasBuf.clear(color(255, 255, 255, 0));
@@ -75,9 +82,9 @@ void draw() {
   // draw canvas area (scaled) with checkerboard behind
   pushStyle();
   noSmooth();
-  image(checkPattern, 100, 10, canvasBuf.w * canvasScale, canvasBuf.h * canvasScale);
+  image(checkPattern, canvasOffsetX, canvasOffsetY, canvasBuf.w * canvasScale, canvasBuf.h * canvasScale);
   popStyle();
-  canvasBuf.drawTo(100, 10, canvasScale);
+  canvasBuf.drawTo(canvasOffsetX, canvasOffsetY, canvasScale);
 
   // draw tool overlay (draw in logical canvas coords into overlay, then composite scaled)
   overlay.beginDraw();
@@ -141,8 +148,8 @@ void draw() {
   }
   // draw tool cursor at mouse position (in logical canvas coords)
   // hide system cursor while over canvas
-  float canvasX = 100;
-  float canvasY = 10;
+  float canvasX = canvasOffsetX;
+  float canvasY = canvasOffsetY;
   float canvasW = canvasBuf.w * canvasScale;
   float canvasH = canvasBuf.h * canvasScale;
   if (mouseX >= canvasX && mouseX <= canvasX + canvasW && mouseY >= canvasY && mouseY <= canvasY + canvasH) {
@@ -169,7 +176,7 @@ void draw() {
 
   // composite overlay on top of the canvas (scaled to match canvas draw)
   pushStyle();
-  image(overlay, 100, 10, canvasBuf.w * canvasScale, canvasBuf.h * canvasScale);
+  image(overlay, canvasOffsetX, canvasOffsetY, canvasBuf.w * canvasScale, canvasBuf.h * canvasScale);
   popStyle();
 
   // update & draw preview (preview reflects committed canvas + overlay)
@@ -189,32 +196,71 @@ void draw() {
 
 // Input dispatch — translate screen -> canvas coords
 PVector screenToCanvas(float sx, float sy, float scale) {
-  float cx = (sx - 100) / scale;
-  float cy = (sy - 10) / scale;
+  float cx = (sx - canvasOffsetX) / scale;
+  float cy = (sy - canvasOffsetY) / scale;
   return new PVector(cx, cy);
 }
 
 void mousePressed() {
+  // support panning via middle mouse, right mouse, holding space, or sticky 'h'
+  if (mouseButton == CENTER || mouseButton == RIGHT || (keyPressed && key == ' ') || panStickyByH) {
+    panning = true;
+    return;
+  }
+
   Tool t = toolbar.getActive();
   if (t != null) {
-    PVector c = screenToCanvas(mouseX, mouseY, 3.0);
+    PVector c = screenToCanvas(mouseX, mouseY, canvasScale);
     t.onMousePressed(c.x, c.y);
   }
 }
 
 void mouseDragged() {
+  // handle panning when active
+  if (panning) {
+    canvasOffsetX += mouseX - pmouseX;
+    canvasOffsetY += mouseY - pmouseY;
+    return;
+  }
+
   Tool t = toolbar.getActive();
   if (t != null) {
-    PVector c = screenToCanvas(mouseX, mouseY, 3.0);
+    PVector c = screenToCanvas(mouseX, mouseY, canvasScale);
     t.onMouseDragged(c.x, c.y);
   }
 }
 
 void mouseReleased() {
+  if (panning) {
+    // if panning was initiated via 'h' (sticky), do not disable on mouse release
+    if (!panStickyByH) {
+      panning = false;
+    }
+    return;
+  }
+
   Tool t = toolbar.getActive();
   if (t != null) {
-    PVector c = screenToCanvas(mouseX, mouseY, 3.0);
+    PVector c = screenToCanvas(mouseX, mouseY, canvasScale);
     t.onMouseReleased(c.x, c.y);
   }
+}
+
+// Zoom with mouse wheel, keeping the cursor focused point stable
+void mouseWheel(processing.event.MouseEvent event) {
+  float count = event.getCount();
+  if (count == 0) return;
+  float factor = pow(1.1, -count);
+
+  // logical coordinates under cursor before zoom
+  float ux = (mouseX - canvasOffsetX) / canvasScale;
+  float uy = (mouseY - canvasOffsetY) / canvasScale;
+
+  canvasScale *= factor;
+  canvasScale = constrain(canvasScale, minCanvasScale, maxCanvasScale);
+
+  // adjust offset so the same logical point remains under the cursor
+  canvasOffsetX = mouseX - ux * canvasScale;
+  canvasOffsetY = mouseY - uy * canvasScale;
 }
 

@@ -1,4 +1,19 @@
 void keyPressed() {
+  // Space: enter panning mode while held. 'h': toggle sticky panning.
+  if (key == ' ') {
+    panning = true;
+    panStickyByH = false;
+    return;
+  }
+  if (key == 'h' || key == 'H') {
+    println("Enable Sticky Panning Mode");
+    // enable sticky panning (do not toggle off here). It is cleared when a tool is selected.
+    panStickyByH = true;
+    panning = true;
+    // clear active tool to avoid conflicts
+    toolbar.setActiveNone();
+    return;
+  }
   if (key == 'd' || key == 'D') {
     // dump preview for debugging at displayed sizes, composed with checkerboard
     int outPW = int(preview.w * previewScale);
@@ -74,5 +89,56 @@ void keyPressed() {
     println("Save Canvas to PNG");
     // save whole app canvas to PNG for debug or reporting
     save("canvas_image.png");
+  }
+
+  // Keyboard zoom: '+' to zoom in (25%), '-' to zoom out (25%).
+  if (key == '+') {
+    println("Zoom In by 25%");
+    Tool t = toolbar.getToolByNameInstance("Zoom");
+    if (t != null && t instanceof ZoomTool) {
+      ZoomTool z = (ZoomTool)t;
+      float prev = canvasScale;
+      float factor = 1.25;
+      float screenX, screenY;
+      if (mouseX >= canvasOffsetX && mouseX <= canvasOffsetX + canvasBuf.w * canvasScale && mouseY >= canvasOffsetY && mouseY <= canvasOffsetY + canvasBuf.h * canvasScale) {
+        screenX = mouseX;
+        screenY = mouseY;
+      } else {
+        float ux = canvasBuf.w/2.0;
+        float uy = canvasBuf.h/2.0;
+        screenX = canvasOffsetX + ux * prev;
+        screenY = canvasOffsetY + uy * prev;
+      }
+      z.zoomBy(factor, screenX, screenY);
+    }
+    return;
+  }
+  if (key == '-') {
+    println("Zoom Out by 25%");
+    Tool t = toolbar.getToolByNameInstance("Zoom");
+    if (t != null && t instanceof ZoomTool) {
+      ZoomTool z = (ZoomTool)t;
+      float prev = canvasScale;
+      float factor = 1.0 / 1.25;
+      float screenX, screenY;
+      if (mouseX >= canvasOffsetX && mouseX <= canvasOffsetX + canvasBuf.w * canvasScale && mouseY >= canvasOffsetY && mouseY <= canvasOffsetY + canvasBuf.h * canvasScale) {
+        screenX = mouseX;
+        screenY = mouseY;
+      } else {
+        float ux = canvasBuf.w/2.0;
+        float uy = canvasBuf.h/2.0;
+        screenX = canvasOffsetX + ux * prev;
+        screenY = canvasOffsetY + uy * prev;
+      }
+      z.zoomBy(factor, screenX, screenY);
+    }
+    return;
+  }
+}
+
+void keyReleased() {
+  // If spacebar was released, stop panning unless it's sticky via 'h'
+  if (key == ' ') {
+    if (!panStickyByH) panning = false;
   }
 }

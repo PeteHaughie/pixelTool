@@ -1,6 +1,6 @@
 class Toolbar {
   ArrayList<Tool> tools;
-  int activeIndex = 0;
+  int activeIndex = -1;
   int iconSize = 16;
 
   Toolbar() {
@@ -13,6 +13,7 @@ class Toolbar {
 
   Tool getActive() {
     if (tools.size() == 0) return null;
+    if (activeIndex < 0 || activeIndex >= tools.size()) return null;
     return tools.get(activeIndex);
   }
 
@@ -21,10 +22,24 @@ class Toolbar {
       // call deactivate on previous tool
       Tool prev = getActive();
       if (prev != null) prev.onDeactivate();
+
+      // If panning was toggled on via 'h', switching tools should cancel it
+      if (panStickyByH) {
+        panning = false;
+        panStickyByH = false;
+      }
+
       activeIndex = idx;
       Tool now = getActive();
       if (now != null) now.onActivate();
     }
+  }
+
+  // Clear active tool (no tool selected)
+  void setActiveNone() {
+    Tool prev = getActive();
+    if (prev != null) prev.onDeactivate();
+    activeIndex = -1;
   }
 
   // Select the active tool by its `Tool.name` value. Safe when callers don't
@@ -65,6 +80,15 @@ class Toolbar {
         return;
       }
     }
+  }
+
+  // Return the Tool instance with the given `Tool.name`, or null if not found.
+  Tool getToolByNameInstance(String name) {
+    for (int i = 0; i < tools.size(); i++) {
+      Tool t = tools.get(i);
+      if (t != null && t.name != null && t.name.equals(name)) return t;
+    }
+    return null;
   }
 
   // Draw a simple vertical toolbar at x,y
