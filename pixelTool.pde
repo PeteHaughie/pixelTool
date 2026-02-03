@@ -82,6 +82,59 @@ void draw() {
   // draw tool overlay (draw in logical canvas coords into overlay, then composite scaled)
   overlay.beginDraw();
   overlay.clear();
+  // draw persistent selection (marching ants) from global state so selection
+  // remains visible when other tools are active
+  if (state != null && state.hasSelection) {
+    overlay.pushStyle();
+    // translucent fill
+    overlay.noStroke();
+    overlay.fill(0, 120);
+    overlay.rect(state.selX, state.selY, state.selW, state.selH);
+
+    // marching ants outline
+    overlay.noFill();
+    overlay.strokeWeight(1);
+    overlay.noSmooth();
+
+    // advance animation offset on a timer
+    int now = millis();
+    if (now - antsLastTick >= antsSpeedMs) {
+      antsOffset = (antsOffset + 1) % (antsDash * 2);
+      antsLastTick = now;
+    }
+
+    int sw = state.selW;
+    int sh = state.selH;
+    int perimeter = 2 * (sw + sh) - 4;
+    if (perimeter > 0) {
+      int idx = 0;
+      for (int i = 0; i < sw; i++) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
+        overlay.point(state.selX + i, state.selY);
+      }
+      for (int j = 1; j < sh-1; j++) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
+        overlay.point(state.selX + sw - 1, state.selY + j);
+      }
+      for (int i = sw - 1; i >= 0; i--) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
+        overlay.point(state.selX + i, state.selY + sh - 1);
+      }
+      for (int j = sh - 2; j >= 1; j--) {
+        int t = idx++;
+        int phase = (t + antsOffset) % (antsDash * 2);
+        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
+        overlay.point(state.selX, state.selY + j);
+      }
+    }
+    overlay.popStyle();
+  }
   Tool active = toolbar.getActive();
   if (active != null) {
     active.drawOverlay(overlay);

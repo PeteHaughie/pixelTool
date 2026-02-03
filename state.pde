@@ -24,10 +24,37 @@ class StateManager {
   ArrayList<UndoEntry> undoStack;
   ArrayList<UndoEntry> redoStack;
 
+  // Persistent selection model (logical canvas coordinates)
+  int selX = 0;
+  int selY = 0;
+  int selW = 0;
+  int selH = 0;
+  boolean hasSelection = false;
+
   StateManager(CanvasBuffer canvas) {
     this.canvas = canvas;
     this.undoStack = new ArrayList<UndoEntry>();
     this.redoStack = new ArrayList<UndoEntry>();
+  }
+
+  // Selection API
+  void setSelection(int x, int y, int w, int h) {
+    selX = x;
+    selY = y;
+    selW = max(0, w);
+    selH = max(0, h);
+    hasSelection = (selW > 0 && selH > 0);
+  }
+
+  void clearSelection() {
+    selX = selY = selW = selH = 0;
+    hasSelection = false;
+  }
+
+  // Helper to return selection as an int array [x,y,w,h]
+  int[] getSelection() {
+    int[] s = { selX, selY, selW, selH };
+    return s;
   }
 
   // Helper to apply a list of PixelChange entries to the canvas buffer.
