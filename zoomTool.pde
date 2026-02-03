@@ -10,7 +10,7 @@ class ZoomTool extends Tool {
 
   void onMousePressed(float x, float y) {
     // x,y are logical canvas coords under the pointer
-    startScale = canvasScale;
+    startScale = state.getZoomScale();
     startMouseY = mouseY;
     focalUx = x;
     focalUy = y;
@@ -22,17 +22,13 @@ class ZoomTool extends Tool {
     // vertical drag -> exponential zoom: drag up = zoom in, drag down = zoom out
     float dy = startMouseY - mouseY;
     float factor = pow(1.005, dy);
-    float newScale = constrain(startScale * factor, minCanvasScale, maxCanvasScale);
-
-    // compute screen position of focal logical point and preserve it
-    float sx = canvasOffsetX + focalUx * canvasScale;
-    float sy = canvasOffsetY + focalUy * canvasScale;
-
-    canvasScale = newScale;
-
-    // re-center so focal logical point remains under the same screen pos
-    canvasOffsetX = sx - focalUx * canvasScale;
-    canvasOffsetY = sy - focalUy * canvasScale;
+    // compute screen position of focal logical point
+    float curScale = state.getZoomScale();
+    float curOffsetX = state.getZoomOffsetX();
+    float curOffsetY = state.getZoomOffsetY();
+    float sx = curOffsetX + focalUx * curScale;
+    float sy = curOffsetY + focalUy * curScale;
+    zoomBy(factor, sx, sy);
   }
 
   void onMouseReleased(float x, float y) {
@@ -82,19 +78,26 @@ class ZoomTool extends Tool {
 
   // Zoom by a multiplicative factor, keeping logical point under (screenX,screenY)
   void zoomBy(float factor, float screenX, float screenY) {
-    float prev = canvasScale;
+    if (state == null) return;
+
+    float prev = state.getZoomScale();
+    float curOffsetX = state.getZoomOffsetX();
+    float curOffsetY = state.getZoomOffsetY();
+
     // If the provided screen coords are outside the canvas, use the canvas center
-    if (!(screenX >= canvasOffsetX && screenX <= canvasOffsetX + canvasBuf.w * canvasScale && screenY >= canvasOffsetY && screenY <= canvasOffsetY + canvasBuf.h * canvasScale)) {
+    if (!(screenX >= curOffsetX && screenX <= curOffsetX + canvasBuf.w * prev && screenY >= curOffsetY && screenY <= curOffsetY + canvasBuf.h * prev)) {
       float ux = canvasBuf.w/2.0;
       float uy = canvasBuf.h/2.0;
-      screenX = canvasOffsetX + ux * prev;
-      screenY = canvasOffsetY + uy * prev;
+      screenX = curOffsetX + ux * prev;
+      screenY = curOffsetY + uy * prev;
     }
-    float ux = (screenX - canvasOffsetX) / prev;
-    float uy = (screenY - canvasOffsetY) / prev;
+    float ux = (screenX - curOffsetX) / prev;
+    float uy = (screenY - curOffsetY) / prev;
 
-    canvasScale = constrain(prev * factor, minCanvasScale, maxCanvasScale);
-    canvasOffsetX = screenX - ux * canvasScale;
-    canvasOffsetY = screenY - uy * canvasScale;
+    float newScale = constrain(prev * factor, state.getMinZoom(), state.getMaxZoom());
+    float newOffsetX = screenX - ux * newScale;
+    float newOffsetY = screenY - uy * newScale;
+
+    state.setZoomState(newScale, newOffsetX, newOffsetY);
   }
 }

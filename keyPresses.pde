@@ -1,17 +1,17 @@
 void keyPressed() {
   // Space: enter panning mode while held. 'h': toggle sticky panning.
   if (key == ' ') {
-    panning = true;
-    panStickyByH = false;
+    if (state != null) {
+      state.setPanning(true);
+      state.setPanSticky(false);
+    }
     return;
   }
   if (key == 'h' || key == 'H') {
     println("Enable Sticky Panning Mode");
     // enable sticky panning (do not toggle off here). It is cleared when a tool is selected.
-    panStickyByH = true;
-    panning = true;
-    // clear active tool to avoid conflicts
-    toolbar.setActiveNone();
+    // Activate the Pan tool which will set sticky panning via its onActivate()
+    toolbar.setActiveByName("Pan");
     return;
   }
   if (key == 'd' || key == 'D') {
@@ -26,8 +26,9 @@ void keyPressed() {
     pd.save("preview_dump.png");
 
     // also dump the raw canvas buffer scaled to the displayed canvas size, composed
-    int outCW = int(canvasBuf.w * canvasScale);
-    int outCH = int(canvasBuf.h * canvasScale);
+    float dumpScale = state.getZoomScale();
+    int outCW = int(canvasBuf.w * dumpScale);
+    int outCH = int(canvasBuf.h * dumpScale);
     PGraphics cd = createGraphics(outCW, outCH);
     cd.beginDraw();
     cd.noSmooth();
@@ -61,10 +62,15 @@ void keyPressed() {
   }
   if (key == 'x' || key == 'X') {
     println("Swap Foreground/Background Colors");
-    // swap foreground and background
-    int tmp = fgColor;
-    fgColor = bgColor;
-    bgColor = tmp;
+    // swap foreground and background via ColorTool API when available
+    Tool tcol = toolbar.getToolByNameInstance("Colors");
+    if (tcol != null && tcol instanceof ColorTool) {
+      ((ColorTool)tcol).swapColors();
+    } else {
+      int tmp = fgColor;
+      fgColor = bgColor;
+      bgColor = tmp;
+    }
   }
   if (key == 'z' || key == 'Z') {
     println("Undo Last Action");
@@ -93,44 +99,18 @@ void keyPressed() {
 
   // Keyboard zoom: '+' to zoom in (25%), '-' to zoom out (25%).
   if (key == '+') {
-    println("Zoom In by 25%");
+    float factor = 1.25;
     Tool t = toolbar.getToolByNameInstance("Zoom");
     if (t != null && t instanceof ZoomTool) {
-      ZoomTool z = (ZoomTool)t;
-      float prev = canvasScale;
-      float factor = 1.25;
-      float screenX, screenY;
-      if (mouseX >= canvasOffsetX && mouseX <= canvasOffsetX + canvasBuf.w * canvasScale && mouseY >= canvasOffsetY && mouseY <= canvasOffsetY + canvasBuf.h * canvasScale) {
-        screenX = mouseX;
-        screenY = mouseY;
-      } else {
-        float ux = canvasBuf.w/2.0;
-        float uy = canvasBuf.h/2.0;
-        screenX = canvasOffsetX + ux * prev;
-        screenY = canvasOffsetY + uy * prev;
-      }
-      z.zoomBy(factor, screenX, screenY);
+      ((ZoomTool)t).zoomBy(factor, mouseX, mouseY);
     }
     return;
   }
   if (key == '-') {
-    println("Zoom Out by 25%");
+    float factor = 1.0 / 1.25;
     Tool t = toolbar.getToolByNameInstance("Zoom");
     if (t != null && t instanceof ZoomTool) {
-      ZoomTool z = (ZoomTool)t;
-      float prev = canvasScale;
-      float factor = 1.0 / 1.25;
-      float screenX, screenY;
-      if (mouseX >= canvasOffsetX && mouseX <= canvasOffsetX + canvasBuf.w * canvasScale && mouseY >= canvasOffsetY && mouseY <= canvasOffsetY + canvasBuf.h * canvasScale) {
-        screenX = mouseX;
-        screenY = mouseY;
-      } else {
-        float ux = canvasBuf.w/2.0;
-        float uy = canvasBuf.h/2.0;
-        screenX = canvasOffsetX + ux * prev;
-        screenY = canvasOffsetY + uy * prev;
-      }
-      z.zoomBy(factor, screenX, screenY);
+      ((ZoomTool)t).zoomBy(factor, mouseX, mouseY);
     }
     return;
   }
@@ -139,6 +119,8 @@ void keyPressed() {
 void keyReleased() {
   // If spacebar was released, stop panning unless it's sticky via 'h'
   if (key == ' ') {
-    if (!panStickyByH) panning = false;
+    if (state != null) {
+      if (!state.isPanSticky()) state.setPanning(false);
+    }
   }
 }

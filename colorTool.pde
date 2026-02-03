@@ -3,6 +3,13 @@ class ColorTool extends Tool {
     super("Colors");
   }
 
+  // Swap the global foreground/background colors
+  void swapColors() {
+    int tmp = fgColor;
+    fgColor = bgColor;
+    bgColor = tmp;
+  }
+
   // Show the current fg/bg as a small overlay in canvas logical coords when active
   void drawOverlay(PGraphics pg) {
     // assume caller has begun the overlay

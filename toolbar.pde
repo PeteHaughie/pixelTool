@@ -24,9 +24,9 @@ class Toolbar {
       if (prev != null) prev.onDeactivate();
 
       // If panning was toggled on via 'h', switching tools should cancel it
-      if (panStickyByH) {
-        panning = false;
-        panStickyByH = false;
+      if (state != null && state.isPanSticky()) {
+        state.setPanning(false);
+        state.setPanSticky(false);
       }
 
       activeIndex = idx;

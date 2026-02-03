@@ -174,4 +174,35 @@ class StateManager {
     undoStack.add(entry);
     redoStack.clear();
   }
+
+  // Zoom the canvas display by a multiplicative factor, keeping the logical
+  // Set the zoom/display transform state. This stores values in StateManager
+  // so callers can treat state as the source of truth. It also updates the
+  // legacy globals used by the drawing code to minimize refactoring.
+  float zoomScale = 3.0;
+  float zoomOffsetX = 100;
+  float zoomOffsetY = 10;
+  float minZoom = 1.0;
+  float maxZoom = 32.0;
+
+  void setZoomState(float scale, float offsetX, float offsetY) {
+    zoomScale = scale;
+    zoomOffsetX = offsetX;
+    zoomOffsetY = offsetY;
+  }
+
+  float getZoomScale() { return zoomScale; }
+  float getZoomOffsetX() { return zoomOffsetX; }
+  float getZoomOffsetY() { return zoomOffsetY; }
+  float getMinZoom() { return minZoom; }
+  float getMaxZoom() { return maxZoom; }
+  // Panning state: whether panning is active, and whether it's sticky (via 'h')
+  boolean panning = false;
+  boolean panSticky = false;
+
+  void setPanning(boolean v) { panning = v; }
+  boolean isPanning() { return panning; }
+
+  void setPanSticky(boolean v) { panSticky = v; }
+  boolean isPanSticky() { return panSticky; }
 }
