@@ -24,13 +24,31 @@ There is a preview window to see the artwork in real-time. Under the preview you
 
 The user experience focuses on ease of use and efficiency. Commonly understood keyboard shortcuts are available for actions which are frequently used, such as undo, redo, copy, paste, and tool selection. The interface is designed to minimize the number of clicks and provide immediate feedback to the user. There is a shift-click feature to draw straight lines, and a click-and-drag feature for filling areas with color.
 
+## Keyboard Shortcuts
+
+The kayboard controls are split between unmodified keys for easy and intuitive access to commonly used tools, and modified keys (CTRL/CMD, SHIFT, ALT) for actions that are less frequently used, more complex, potentially destructive, or application control.
+
+### Unmodified Keys
 - P: Pencil Tool 
 - M: Rectangle Selection Tool
 - L: Lasso Selection Tool
+- V: Move Tool
 - E: Eraser Tool
 - F: Fill Tool 
 - T: Toggle Transparency Grid
 - C: Color Picker Tool 
+- I: Color Eyedropper Tool
+- X: Swap Foreground/Background Colors
+- D: Reset Foreground/Background Colors to Default (Black/White)
+- R: Rectangle Shape Tool
+- O: Oval Shape Tool
+- Z: Zoom Tool
+- H: Hand Tool (Pan Canvas)
+- Spacebar: Temporary Hand Tool (Pan Canvas while held)
+- Cursor Keys: Nudge Selection/Layer/Brush Position by 1 Pixel
+- Shift + Cursor Keys: Nudge Selection/Layer/Brush Position by 10 Pixels
+
+### Modified Keys
 - CTRL/CMD + A: Select All
 - CTRL/CMD + D: Deselect
 - Shift + CTRL/CMD + F: Fullscreen Mode
@@ -40,11 +58,23 @@ The user experience focuses on ease of use and efficiency. Commonly understood k
 - CTRL/CMD + Z: Undo 
 - CTRL/CMD + Y: Redo
 - CTRL/CMD + S: Save
+- CTRL/CMD + R: Show/Hide Rulers
+- CTRL/CMD + G: Group Selection (Non-Destructive)
+- CTRL/CMD + U: Ungroup Selection
+- CTRL/CMD + M: Merge Layers (Destructive)
 - SHIFT + CTRL/CMD + S: Save As/Save a Copy
 - CTRL/CMD + O: Open
 - CTRL/CMD + W: Close Canvas (user will be prompted to save current work if unsaved changes exist)
 - CTRL/CMD + N: New Canvas (user will be prompted to save current work if unsaved changes exist)
+
+### Navigation Keys
 - Tab: Switch between tools
 - Alt + Tab: Switch between layers
 - Ctrl + Tab: Switch between brushes
-- Left/Right Arrow: Previous/Next Frame
+- Alt + Left/Right Arrow: Previous/Next Frame
+
+### Mouse Controls
+- Left Click: Draw/Select/Erase/Fill (depending on selected tool)
+- Right Click: Open Color Picker
+- Scroll Wheel: Zoom In/Out
+- Middle Click + Drag: Pan Canvas

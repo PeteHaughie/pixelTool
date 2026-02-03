@@ -49,11 +49,12 @@ void setup() {
   checkPattern.endDraw();
 
   // Register tools
-  toolbar.addTool(new ColorTool());
   toolbar.addTool(new PencilTool());
   toolbar.addTool(new FloodFillTool());
   toolbar.addTool(new EraseTool());
   toolbar.addTool(new SquareMarqueeTool());
+  // add the swatch tool last so it's at the bottom of the list
+  toolbar.addTool(new ColorTool());
   // default to the Pencil tool so drawing works immediately
   toolbar.setActiveByName("Pencil");
 

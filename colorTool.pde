@@ -7,25 +7,23 @@ class ColorTool extends Tool {
   void drawOverlay(PGraphics pg) {
     // assume caller has begun the overlay
     pg.pushStyle();
-    int sw = 6; // swatch size in logical pixels
-    int pad = 2;
-    int x = pad;
-    int y = pad;
+    // simplified: fixed larger overlapped swatches
+    int sw = 20; // swatch size in logical pixels
+    int pad = 4; // padding from top-left
+    int off = 6; // overlap offset between back and top swatch
+
+    int xTop = pad;
+    int yTop = pad;
+    int xBack = xTop + off;
+    int yBack = yTop + off;
 
     pg.noStroke();
-    pg.fill(fgColor);
-    pg.rect(x, y, sw, sw);
+    // back swatch (background color)
     pg.fill(bgColor);
-    pg.rect(x + sw + pad, y, sw, sw);
-
-    // highlight which is active (based on toolbar selection)
-    if (toolbar != null && toolbar.getActive() == this) {
-      pg.noFill();
-      pg.stroke(255, 0, 0);
-      pg.strokeWeight(1);
-      // highlight the fg swatch
-      pg.rect(x - 1, y - 1, sw + 2, sw + 2);
-    }
+    pg.rect(xBack, yBack, sw, sw);
+    // top swatch (foreground color) — drawn last so it appears on top
+    pg.fill(fgColor);
+    pg.rect(xTop, yTop, sw, sw);
 
     pg.popStyle();
   }
@@ -33,21 +31,24 @@ class ColorTool extends Tool {
   // Create a small pixel-icon: left square = fg, right = bg
   ArrayList<PixelSpec> getIconPixels(int size) {
     ArrayList<PixelSpec> out = new ArrayList<PixelSpec>();
-    int sw = max(2, size/3);
-    int pad = max(1, (size - (sw*2)) / 3);
+    // simplified discrete layout: bg drawn first, fg on top
+    // use a larger swatch based on icon size so we don't get a tiny ~10px cap
+    int sw = max(2, size - 4);
+    int pad = 1;
     int y0 = (size - sw) / 2;
-    int x0 = pad;
-    // left square
+    int xTop = pad;
+    int off = max(1, sw / 4);
+    int xBack = xTop + off;
+    // background square (drawn first)
     for (int xx = 0; xx < sw; xx++) {
       for (int yy = 0; yy < sw; yy++) {
-        out.add(new PixelSpec(x0 + xx, y0 + yy, fgColor));
+        out.add(new PixelSpec(xBack + xx, y0 + yy, bgColor));
       }
     }
-    // right square
-    int x1 = x0 + sw + pad;
+    // foreground square (drawn on top)
     for (int xx = 0; xx < sw; xx++) {
       for (int yy = 0; yy < sw; yy++) {
-        out.add(new PixelSpec(x1 + xx, y0 + yy, bgColor));
+        out.add(new PixelSpec(xTop + xx, y0 + yy, fgColor));
       }
     }
     return out;
