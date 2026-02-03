@@ -75,15 +75,8 @@ class Toolbar {
     for (int i = 0; i < tools.size(); i++) {
       Tool t = tools.get(i);
       // background
-      if (toolbar.getToolByName(i).equals("Colors")) {
-        noFill();
-        noStroke();
-      }
-      else
-      {
-        fill(i == activeIndex ? 200 : 240);
-        stroke(120);
-      }
+      fill(i == activeIndex ? 200 : 240);
+      stroke(120);
       rect(x, ty, iconSize + pad*2, iconSize + pad*2);
 
       // draw icon pixels scaled to iconSize
