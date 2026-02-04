@@ -1,5 +1,51 @@
 void keyPressed() {
-  // Space: enter panning mode while held. 'h': toggle sticky panning.
+  if (key == CODED) {
+    // println("Key Pressed: CODED Code: " + keyCode);
+    if (keyCode == SHIFT) {
+      // set shift state to true
+      setIsShiftKeyPressed(true);
+      println("Shift key pressed");
+    }
+    if (keyCode == CONTROL) {
+      // set control state to true
+      setIsCtrlKeyPressed(true);
+      println("Control key pressed");
+    }
+    if (keyCode == ALT) {
+      // set alt state to true
+      setIsAltKeyPressed(true);
+      println("Alt key pressed");
+    }
+    if (keyCode == 157) {
+      // Meta key on Mac
+      // set meta state to true
+      setIsMetaKeyPressed(true);
+      println("Meta key pressed");
+    }
+  }
+  // non-ascii keys that don't need to be keyCode detected are: BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE
+  // if (key == ' ') {
+  //   // we know this works because we hijack it for panning
+  //   println("Space key pressed");
+  // }
+  if (key == BACKSPACE) {
+    println("Backspace key pressed");
+  }
+  if (key == TAB) {
+    println("Tab key pressed");
+  }
+  if (key == ENTER || key == RETURN) {
+    println("Enter/Return key pressed");
+  }
+  if (key == ESC) {
+    println("Escape key pressed");
+    key = 0;
+  }
+  if (key == DELETE) {
+    println("Delete key pressed");
+  }
+
+  // commands
   if (key == ' ') {
     if (state != null) {
       state.setPanning(true);
@@ -66,27 +112,23 @@ void keyPressed() {
     Tool tcol = toolbar.getToolByNameInstance("Colors");
     if (tcol != null && tcol instanceof ColorTool) {
       ((ColorTool)tcol).swapColors();
-    } else {
-      int tmp = fgColor;
-      fgColor = bgColor;
-      bgColor = tmp;
     }
   }
-  if (key == 'z' || key == 'Z') {
+  if (key == 'z' && isMetaKeyPressed()) {
     println("Undo Last Action");
     // undo last action
     if (state != null) {
       state.undo();
     }
   }
-  if (key == 'y' || key == 'Y') {
+  if (key == 'y') {
     println("Redo Last Action");
     // redo last undone action
     if (state != null) {
       state.redo();
     }
   }
-  if (key == 'f' || key == 'F') {
+  if (key == 'f') {
       println("Flood Fill Tool Selected");
       // flood fill at cursor using foreground color
       toolbar.setActiveByName("FloodFill");
@@ -117,6 +159,30 @@ void keyPressed() {
 }
 
 void keyReleased() {
+   if (key == CODED) {
+    // println("Key Pressed: CODED Code: " + keyCode);
+    if (keyCode == SHIFT) {
+      // set shift state to false
+      setIsShiftKeyPressed(false);
+      println("Shift key released");
+    }
+    if (keyCode == CONTROL) {
+      // set control state to false
+      setIsCtrlKeyPressed(false);
+      println("Control key released");
+    }
+    if (keyCode == ALT) {
+      // set alt state to false
+      setIsAltKeyPressed(false);
+      println("Alt key released");
+    }
+    if (keyCode == 157) {
+      // Meta key on Mac
+      // set meta state to false
+      setIsMetaKeyPressed(false);
+      println("Meta key released");
+    }
+  }
   // If spacebar was released, stop panning unless it's sticky via 'h'
   if (key == ' ') {
     if (state != null) {

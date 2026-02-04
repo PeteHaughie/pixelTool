@@ -33,7 +33,12 @@ class EraseTool extends Tool {
   void onMouseReleased(float x, float y) {
     if (stroke.size() > 0) {
       if (state != null) {
-        state.commitStroke(stroke, eraseColor);
+        // Build an UndoEntry and apply via StateManager
+        UndoEntry e = buildStrokeUndoEntry(state.canvas, stroke, eraseColor);
+        if (e != null && e.changes.size() > 0) {
+          state.applyChanges(e.changes, true);
+          state.pushUndoEntry(e);
+        }
       }
       stroke.clear();
     }

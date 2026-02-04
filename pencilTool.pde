@@ -32,7 +32,12 @@ class PencilTool extends Tool {
     // commit into canvas via global state manager if present
     if (stroke.size() > 0) {
       if (state != null) {
-        state.commitStroke(stroke, fgColor);
+        // Build an UndoEntry from the stroke and apply it via StateManager
+        UndoEntry e = buildStrokeUndoEntry(state.canvas, stroke, fgColor);
+        if (e != null && e.changes.size() > 0) {
+          state.applyChanges(e.changes, true);
+          state.pushUndoEntry(e);
+        }
       }
       stroke.clear();
     }

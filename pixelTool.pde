@@ -112,29 +112,40 @@ void draw() {
     int perimeter = 2 * (sw + sh) - 4;
     if (perimeter > 0) {
       int idx = 0;
+      overlay.noStroke();
       for (int i = 0; i < sw; i++) {
         int t = idx++;
         int phase = (t + antsOffset) % (antsDash * 2);
-        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
-        overlay.point(state.selX + i, state.selY);
+        int col = (phase < antsDash) ? color(255) : color(0);
+        overlay.fill(col);
+        overlay.rect(state.selX + i, state.selY, 1, 1);
       }
       for (int j = 1; j < sh-1; j++) {
         int t = idx++;
         int phase = (t + antsOffset) % (antsDash * 2);
-        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
-        overlay.point(state.selX + sw - 1, state.selY + j);
+        int col = (phase < antsDash) ? color(255) : color(0);
+        int px = state.selX + sw - 1;
+        int py = state.selY + j;
+        overlay.fill(col);
+        overlay.rect(px, py, 1, 1);
+        if (py + 1 < overlay.height) overlay.rect(px, py + 1, 1, 1);
       }
       for (int i = sw - 1; i >= 0; i--) {
         int t = idx++;
         int phase = (t + antsOffset) % (antsDash * 2);
-        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
-        overlay.point(state.selX + i, state.selY + sh - 1);
+        int col = (phase < antsDash) ? color(255) : color(0);
+        overlay.fill(col);
+        overlay.rect(state.selX + i, state.selY + sh - 1, 1, 1);
       }
       for (int j = sh - 2; j >= 1; j--) {
         int t = idx++;
         int phase = (t + antsOffset) % (antsDash * 2);
-        if (phase < antsDash) overlay.stroke(255); else overlay.stroke(0);
-        overlay.point(state.selX, state.selY + j);
+        int col = (phase < antsDash) ? color(255) : color(0);
+        int px = state.selX;
+        int py = state.selY + j;
+        overlay.fill(col);
+        overlay.rect(px, py, 1, 1);
+        if (py + 1 < overlay.height) overlay.rect(px, py + 1, 1, 1);
       }
     }
     overlay.popStyle();
