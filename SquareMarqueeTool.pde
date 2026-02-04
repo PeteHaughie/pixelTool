@@ -1,8 +1,4 @@
-// marching ants settings (global for this tool file)
-int antsOffset = 0;
-int antsDash = 4; // length of dash in pixels
-int antsSpeedMs = 60; // milliseconds per step (higher = slower)
-int antsLastTick = 0;
+
 
 class SquareMarqueeTool extends Tool {
   float startX, startY;
